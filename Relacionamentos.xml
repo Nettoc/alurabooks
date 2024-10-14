@@ -1,0 +1,327 @@
+<documento>
+    <relacionamentos_integridade>
+        <!-- Relacionamento e Integridade para tb_geracao_projetos -->
+        <entidade>
+            <nome>tb_geracao_projetos</nome>
+            <relacionamentos>
+                <relacionamento>
+                    <tabela_destino>tb_edital</tabela_destino>
+                    <campo_origem>geracao_id</campo_origem>
+                    <campo_destino>geracao_id</campo_destino>
+                    <descricao>
+                        A tabela `tb_geracao_projetos` possui um relacionamento de **um para muitos** com a tabela `tb_edital`, 
+                        indicando que cada geração de projetos pode conter vários editais associados.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI1.1</identificador>
+                            <descricao>Uma geração de projetos só pode ser deletada se não houver editais associados a ela.</descricao>
+                            <impacto>Evita a quebra de integridade referencial ao garantir que não haja orfãos em `tb_edital`.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+            </relacionamentos>
+        </entidade>
+
+        <!-- Relacionamento e Integridade para tb_edital -->
+        <entidade>
+            <nome>tb_edital</nome>
+            <relacionamentos>
+                <relacionamento>
+                    <tabela_destino>tb_projeto</tabela_destino>
+                    <campo_origem>edital_id</campo_origem>
+                    <campo_destino>edital_id</campo_destino>
+                    <descricao>
+                        A tabela `tb_edital` possui um relacionamento de **um para muitos** com `tb_projeto`, representando que um edital pode 
+                        gerar vários projetos, e cada projeto deve estar vinculado a um único edital.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI2.1</identificador>
+                            <descricao>Um edital não pode ser deletado se houver projetos associados a ele.</descricao>
+                            <impacto>Garante a consistência das informações, evitando a exclusão de editais que ainda estão em execução.</impacto>
+                        </regra>
+                        <regra>
+                            <identificador>RI2.2</identificador>
+                            <descricao>O valor total do edital deve ser a soma dos valores dos projetos associados a ele.</descricao>
+                            <impacto>Assegura que o valor total alocado esteja sempre atualizado com base nos projetos.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+
+                <relacionamento>
+                    <tabela_destino>tb_linha_tematica</tabela_destino>
+                    <campo_origem>linha_tematica_id</campo_origem>
+                    <campo_destino>linha_tematica_id</campo_destino>
+                    <descricao>
+                        Cada edital deve ser associado a uma linha temática específica para indicar o escopo do financiamento e a área de atuação principal.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI2.3</identificador>
+                            <descricao>Um edital não pode ser criado sem uma linha temática definida.</descricao>
+                            <impacto>Garante que o escopo de cada edital esteja sempre especificado.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+            </relacionamentos>
+        </entidade>
+
+        <!-- Relacionamento e Integridade para tb_projeto -->
+        <entidade>
+            <nome>tb_projeto</nome>
+            <relacionamentos>
+                <relacionamento>
+                    <tabela_destino>tb_grant</tabela_destino>
+                    <campo_origem>projeto_id</campo_origem>
+                    <campo_destino>projeto_id</campo_destino>
+                    <descricao>
+                        A tabela `tb_projeto` possui um relacionamento de **um para muitos** com `tb_grant`, representando que um projeto pode 
+                        ter vários grants associados, com objetivos específicos.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI3.1</identificador>
+                            <descricao>Um projeto não pode ser deletado se houver grants vinculados a ele.</descricao>
+                            <impacto>Evita que grants fiquem órfãos e sem referência a um projeto específico.</impacto>
+                        </regra>
+                        <regra>
+                            <identificador>RI3.2</identificador>
+                            <descricao>O valor total do projeto deve ser a soma dos valores dos grants associados a ele.</descricao>
+                            <impacto>Garante que o valor total do projeto esteja sempre atualizado com base nos grants alocados.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+
+                <relacionamento>
+                    <tabela_destino>tb_pessoa</tabela_destino>
+                    <campo_origem>pessoa_responsavel_id</campo_origem>
+                    <campo_destino>pessoa_id</campo_destino>
+                    <descricao>
+                        Cada projeto pode ter uma pessoa responsável associada a ele, que será indicada na tabela `tb_pessoa`.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI3.3</identificador>
+                            <descricao>Um projeto sem responsável pode ser criado, mas não pode ser concluído sem essa informação.</descricao>
+                            <impacto>Assegura que cada projeto tenha um responsável claro no momento de finalização.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+            </relacionamentos>
+        </entidade>
+
+        <!-- Relacionamento e Integridade para tb_grant -->
+        <entidade>
+            <nome>tb_grant</nome>
+            <relacionamentos>
+                <relacionamento>
+                    <tabela_destino>tb_meta</tabela_destino>
+                    <campo_origem>grant_id</campo_origem>
+                    <campo_destino>grant_id</campo_destino>
+                    <descricao>
+                        Cada grant pode ter metas definidas, associadas à tabela `tb_meta`, que estabelece indicadores e resultados esperados.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI4.1</identificador>
+                            <descricao>Um grant não pode ser excluído se houver metas atreladas a ele.</descricao>
+                            <impacto>Garante que as metas tenham sempre um grant de referência.</impacto>
+                        </regra>
+                        <regra>
+                            <identificador>RI4.2</identificador>
+                            <descricao>O valor total de metas associadas não deve exceder o valor financeiro do grant.</descricao>
+                            <impacto>Evita problemas de alocação financeira e sobrecarga de metas.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+            </relacionamentos>
+        </entidade>
+
+        <!-- Relacionamento e Integridade para tb_escuta -->
+        <entidade>
+            <nome>tb_escuta</nome>
+            <relacionamentos>
+                <relacionamento>
+                    <tabela_destino>tb_participante</tabela_destino>
+                    <campo_origem>escuta_id</campo_origem>
+                    <campo_destino>escuta_id</campo_destino>
+                    <descricao>
+                        Cada escuta pode ter múltiplos participantes registrados, com percepções e informações pessoais associadas.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI6.1</identificador>
+                            <descricao>Uma escuta não pode ser excluída se houver participantes vinculados a ela.</descricao>
+                            <impacto>Evita a perda de dados e garante a integridade dos registros.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+            </relacionamentos>
+        </entidade>
+    </relacionamentos_integridade>
+    <relacionamentos_integridade>
+        <!-- Relacionamento e Integridade para tb_participante -->
+        <entidade>
+            <nome>tb_participante</nome>
+            <relacionamentos>
+                <relacionamento>
+                    <tabela_destino>tb_deficiencia</tabela_destino>
+                    <campo_origem>participante_id</campo_origem>
+                    <campo_destino>participante_id</campo_destino>
+                    <descricao>
+                        A tabela `tb_participante` possui um relacionamento de **muitos para muitos** com a tabela `tb_deficiencia`, sendo gerenciado pela tabela resolvedora `tb_participante_deficiencia`.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI7.1</identificador>
+                            <descricao>Um participante pode ter várias deficiências associadas, e cada deficiência pode ser registrada em múltiplos participantes.</descricao>
+                            <impacto>Garante que informações de deficiências sejam gerenciadas de forma flexível e estruturada.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+
+                <relacionamento>
+                    <tabela_destino>tb_percepcao</tabela_destino>
+                    <campo_origem>participante_id</campo_origem>
+                    <campo_destino>participante_id</campo_destino>
+                    <descricao>
+                        A tabela `tb_participante` possui um relacionamento de **um para muitos** com `tb_percepcao`, onde cada participante pode ter múltiplas percepções registradas.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI7.2</identificador>
+                            <descricao>Um participante não pode ser deletado se houver percepções vinculadas a ele.</descricao>
+                            <impacto>Garante que cada percepção tenha uma referência ativa ao participante que a registrou.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+
+                <relacionamento>
+                    <tabela_destino>tb_demanda_reparacao</tabela_destino>
+                    <campo_origem>participante_id</campo_origem>
+                    <campo_destino>participante_id</campo_destino>
+                    <descricao>
+                        A tabela `tb_participante` possui um relacionamento de **um para muitos** com `tb_demanda_reparacao`, indicando que cada participante pode fornecer uma ou mais demandas de reparação.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI7.3</identificador>
+                            <descricao>Um participante não pode ser excluído se houver demandas de reparação associadas a ele.</descricao>
+                            <impacto>Assegura que todas as demandas de reparação estejam associadas a um participante válido.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+
+                <relacionamento>
+                    <tabela_destino>tb_pessoa</tabela_destino>
+                    <campo_origem>pessoa_id</campo_origem>
+                    <campo_destino>pessoa_id</campo_destino>
+                    <descricao>
+                        Cada participante pode ter um vínculo opcional com um registro na tabela `tb_pessoa`, indicando uma associação formal ao programa.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI7.4</identificador>
+                            <descricao>Um participante com `pessoa_id` associado não pode ser excluído até que a referência seja removida.</descricao>
+                            <impacto>Evita inconsistências em registros de identificação de participantes.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+            </relacionamentos>
+        </entidade>
+
+        <!-- Relacionamento e Integridade para tb_meta -->
+        <entidade>
+            <nome>tb_meta</nome>
+            <relacionamentos>
+                <relacionamento>
+                    <tabela_destino>tb_avanco_meta</tabela_destino>
+                    <campo_origem>meta_id</campo_origem>
+                    <campo_destino>meta_id</campo_destino>
+                    <descricao>
+                        A tabela `tb_meta` possui um relacionamento de **um para muitos** com a tabela `tb_avanco_meta`, indicando que cada meta pode ter vários avanços registrados para monitoramento contínuo.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI8.1</identificador>
+                            <descricao>Uma meta não pode ser excluída se houver avanços de metas associados a ela.</descricao>
+                            <impacto>Garante que todos os avanços de metas tenham uma meta de referência.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+
+                <relacionamento>
+                    <tabela_destino>tb_projeto</tabela_destino>
+                    <campo_origem>projeto_id</campo_origem>
+                    <campo_destino>projeto_id</campo_destino>
+                    <descricao>
+                        Cada meta pode estar associada a um projeto específico, e um projeto pode ter várias metas definidas.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI8.2</identificador>
+                            <descricao>Uma meta deve ser vinculada a pelo menos um projeto ou grant para garantir a rastreabilidade de resultados.</descricao>
+                            <impacto>Assegura a integridade no acompanhamento de metas por projetos.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+
+                <relacionamento>
+                    <tabela_destino>tb_grant</tabela_destino>
+                    <campo_origem>grant_id</campo_origem>
+                    <campo_destino>grant_id</campo_destino>
+                    <descricao>
+                        Cada meta pode ser definida para um grant específico, e um grant pode ter múltiplas metas atreladas.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI8.3</identificador>
+                            <descricao>O campo `grant_id` deve ser preenchido se a meta for exclusivamente para o grant e não para o projeto geral.</descricao>
+                            <impacto>Garante clareza na alocação de metas entre projetos e grants.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+            </relacionamentos>
+        </entidade>
+
+        <!-- Relacionamento e Integridade para tb_produto -->
+        <entidade>
+            <nome>tb_produto</nome>
+            <relacionamentos>
+                <relacionamento>
+                    <tabela_destino>tb_projeto</tabela_destino>
+                    <campo_origem>projeto_id</campo_origem>
+                    <campo_destino>projeto_id</campo_destino>
+                    <descricao>
+                        Cada produto gerado deve estar vinculado a um projeto específico, representando entregáveis ou resultados gerados pelo programa.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI9.1</identificador>
+                            <descricao>Um produto só pode ser excluído se o projeto ao qual está vinculado for arquivado ou excluído primeiro.</descricao>
+                            <impacto>Evita que registros de produtos sejam desassociados de seus projetos.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+
+                <relacionamento>
+                    <tabela_destino>tb_avanco_meta</tabela_destino>
+                    <campo_origem>produto_id</campo_origem>
+                    <campo_destino>produto_id</campo_destino>
+                    <descricao>
+                        Cada produto pode ter registros de avanço de metas associados para medir a contribuição do produto ao alcance das metas.
+                    </descricao>
+                    <regras>
+                        <regra>
+                            <identificador>RI9.2</identificador>
+                            <descricao>Um produto com registros de avanço de meta não pode ser excluído até que todos os registros sejam arquivados.</descricao>
+                            <impacto>Garante a rastreabilidade de resultados e metas associadas aos produtos.</impacto>
+                        </regra>
+                    </regras>
+                </relacionamento>
+            </relacionamentos>
+        </entidade>
+
+    </relacionamentos_integridade>
+</documento>
